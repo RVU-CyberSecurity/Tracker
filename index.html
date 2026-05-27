@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InternTrack — Internship Monitoring System</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f8f7f4;--surface:#ffffff;--surface2:#f2f1ee;--border:rgba(0,0,0,0.1);
+  --text:#1a1a18;--text2:#6b6a66;--text3:#9e9d99;
+  --green:#1D9E75;--green-light:#E1F5EE;--green-dark:#0F6E56;
+  --blue:#378ADD;--blue-light:#E6F1FB;--blue-dark:#185FA5;
+  --amber:#BA7517;--amber-light:#FAEEDA;
+  --red:#A32D2D;--red-light:#FCEBEB;
+  --teal-light:#E1F5EE;--teal-text:#0F6E56;
+  --gray-light:#F1EFE8;--gray-text:#5F5E5A;
+  --nav-w:224px;--hdr:54px;--r:10px;--r-sm:7px
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;height:100vh;overflow:hidden}
+
+/* Header */
+.hdr{height:var(--hdr);background:var(--surface);border-bottom:0.5px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0;z-index:50}
+.logo{font-size:15px;font-weight:600;letter-spacing:-.3px;color:var(--text)}
+.logo-dot{color:var(--green)}
+.hdr-pill{font-size:11px;background:var(--green-light);color:var(--green-dark);padding:2px 9px;border-radius:20px;font-weight:500}
+.hdr-r{margin-left:auto;display:flex;align-items:center;gap:10px}
+.avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;flex-shrink:0;cursor:default}
+
+/* Layout */
+.layout{display:flex;flex:1;overflow:hidden}
+.sidebar{width:var(--nav-w);background:var(--surface);border-right:0.5px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;padding:10px 0}
+.sxn{padding:14px 14px 4px;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.9px}
+.nav{display:flex;align-items:center;gap:9px;padding:8px 12px;cursor:pointer;font-size:13px;color:var(--text2);border-radius:var(--r-sm);margin:1px 6px;transition:background .13s,color .13s;user-select:none}
+.nav:hover{background:var(--surface2);color:var(--text)}
+.nav.on{background:var(--blue-light);color:var(--blue-dark);font-weight:500}
+.nav i{font-size:16px;flex-shrink:0}
+.nbadge{margin-left:auto;font-size:10px;background:var(--red-light);color:var(--red);padding:1px 6px;border-radius:10px;font-weight:500}
+.sidebar-foot{margin-top:auto;padding:12px 14px 14px;border-top:0.5px solid var(--border)}
+.qstat{font-size:12px;color:var(--text2);line-height:1.9}
+.qstat span{font-weight:600}
+
+/* Main */
+.main{flex:1;overflow-y:auto;padding:22px 24px}
+.page{display:none}
+.page.on{display:block}
+.ptitle{font-size:19px;font-weight:600;letter-spacing:-.3px;margin-bottom:3px}
+.psub{font-size:13px;color:var(--text2);margin-bottom:20px}
+
+/* Metrics strip */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.mcard{background:var(--surface2);border-radius:var(--r);padding:14px 16px}
+.mlabel{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px}
+.mval{font-size:26px;font-weight:600;line-height:1}
+.msub{font-size:11px;color:var(--text2);margin-top:4px}
+.c-g{color:var(--green)}.c-b{color:var(--blue)}.c-a{color:var(--amber)}.c-r{color:var(--red)}
+
+/* Cards */
+.card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:16px}
+.card-ttl{font-size:13px;font-weight:500;color:var(--text2);margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.card-ttl i{font-size:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;padding:8px 12px;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;border-bottom:0.5px solid var(--border)}
+.tbl td{padding:10px 12px;border-bottom:0.5px solid var(--border);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--surface2)}
+
+/* Badges */
+.badge{display:inline-flex;align-items:center;font-size:11px;padding:3px 8px;border-radius:20px;font-weight:500;gap:3px}
+.bg{background:var(--green-light);color:var(--green-dark)}
+.ba{background:var(--amber-light);color:var(--amber)}
+.br{background:var(--red-light);color:var(--red)}
+.bb{background:var(--blue-light);color:var(--blue-dark)}
+.bt{background:var(--teal-light);color:var(--teal-text)}
+.bgr{background:var(--gray-light);color:var(--gray-text)}
+
+/* Progress */
+.pb{height:5px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.pf{height:100%;border-radius:3px;background:var(--green)}
+.pf-a{background:var(--amber)}
+.pf-r{background:var(--red)}
+.pf-b{background:var(--blue)}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:var(--r-sm);font-size:13px;cursor:pointer;border:0.5px solid var(--border);background:var(--surface);color:var(--text);transition:all .14s;font-family:inherit;font-weight:400}
+.btn:hover{background:var(--surface2)}
+.btn.primary{background:var(--green);color:#fff;border-color:var(--green);font-weight:500}
+.btn.primary:hover{background:var(--green-dark);border-color:var(--green-dark)}
+.btn.sm{padding:4px 10px;font-size:12px}
+.btn.warn{color:var(--amber);border-color:var(--amber-light);background:var(--amber-light)}
+
+/* Week tabs */
+.wtabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:14px}
+.wtab{padding:5px 11px;border-radius:20px;font-size:12px;cursor:pointer;border:0.5px solid var(--border);background:var(--surface);color:var(--text2);transition:all .13s;font-family:inherit}
+.wtab:hover:not(.on){background:var(--surface2)}
+.wtab.on{background:var(--blue-light);color:var(--blue-dark);border-color:transparent;font-weight:500}
+
+/* Search */
+.srch{display:flex;align-items:center;gap:8px;background:var(--surface2);border:0.5px solid var(--border);border-radius:var(--r-sm);padding:7px 12px;margin-bottom:14px}
+.srch i{color:var(--text3);font-size:16px;flex-shrink:0}
+.srch input{background:transparent;border:none;outline:none;flex:1;font-size:13px;font-family:inherit;color:var(--text)}
+
+/* Project grid rows */
+.pgrid{display:grid;grid-template-columns:32px 1fr 110px 90px 110px 80px 80px;align-items:center;gap:12px;padding:10px 14px;border-bottom:0.5px solid var(--border);font-size:13px}
+.pgrid:hover{background:var(--surface2)}
+.pgrid.hdr{background:transparent;padding:7px 14px;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.7px}
+.pgrid.hdr:hover{background:transparent}
+.pnum{font-size:11px;color:var(--text3);font-weight:500}
+
+/* Faculty grid */
+.fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.fcard{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:16px}
+.fav{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff;margin-bottom:10px}
+.fname{font-size:14px;font-weight:600;margin-bottom:2px}
+.fdept{font-size:12px;color:var(--text2);margin-bottom:12px}
+.fstats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fstat{background:var(--surface2);border-radius:var(--r-sm);padding:8px 10px}
+.fstal{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.fstav{font-size:17px;font-weight:600;margin-top:2px}
+
+/* Assignment card */
+.acard{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:10px;display:grid;grid-template-columns:1fr auto;gap:14px;align-items:start}
+.ameta{font-size:12px;color:var(--text2);margin-top:4px}
+
+/* Modal */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--r);padding:24px;width:490px;max-height:85vh;overflow-y:auto;border:0.5px solid var(--border)}
+.mtitle{font-size:16px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+
+/* Form */
+.fl{font-size:12px;font-weight:500;color:var(--text2);margin-bottom:4px;margin-top:12px}
+input[type=text],input[type=date],select,textarea{font-family:inherit;font-size:13px;border:0.5px solid var(--border);border-radius:var(--r-sm);padding:7px 10px;background:var(--surface);color:var(--text);width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* Notif */
+.notif{display:flex;gap:10px;padding:10px 12px;border-radius:var(--r-sm);border:0.5px solid var(--border);margin-bottom:8px;font-size:13px;background:var(--surface);align-items:flex-start}
+.notif i{font-size:17px;flex-shrink:0;margin-top:1px}
+.ntime{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* Bar chart */
+.barchart{display:flex;align-items:flex-end;gap:6px}
+.barcol{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.bar{width:100%;border-radius:3px 3px 0 0;cursor:pointer;opacity:.9;transition:opacity .15s}
+.bar:hover{opacity:1}
+.blbl{font-size:10px;color:var(--text3)}
+
+/* Dot */
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:4px}
+.dg{background:var(--green)}.da{background:#EF9F27}.dr{background:#E24B4A}.db{background:var(--blue)}
+
+/* Section header */
+.sechdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sectitle{font-size:14px;font-weight:500}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,.12);border-radius:2px}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:10px 18px;border-radius:var(--r-sm);font-size:13px;z-index:999;opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+
+select{cursor:pointer}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <i class="ti ti-building-community" style="font-size:20px;color:var(--green)"></i>
+  <span class="logo">Intern<span class="logo-dot">Track</span></span>
+  <span class="hdr-pill">2025 Batch · Week 7 of 12</span>
+  <div class="hdr-r">
+    <button class="btn sm" onclick="openModal('nmodal')"><i class="ti ti-bell"></i> 3</button>
+    <button class="btn sm primary" onclick="openModal('amodal')"><i class="ti ti-plus"></i> New Task</button>
+    <div class="avatar" style="background:#1D9E75" title="Coordinator">BK</div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar">
+    <div style="padding:0 6px">
+      <div class="nav on" onclick="go('dashboard',this)"><i class="ti ti-layout-dashboard"></i>Dashboard</div>
+      <div class="nav" onclick="go('projects',this)"><i class="ti ti-folder"></i>Projects<span class="nbadge">40</span></div>
+      <div class="nav" onclick="go('faculty',this)"><i class="ti ti-users"></i>Faculty</div>
+      <div class="nav" onclick="go('weekly',this)"><i class="ti ti-calendar-week"></i>Weekly Reports</div>
+      <div class="nav" onclick="go('assignments',this)"><i class="ti ti-clipboard-list"></i>Assignments<span class="nbadge">7</span></div>
+      <div class="nav" onclick="go('submissions',this)"><i class="ti ti-file-upload"></i>Submissions</div>
+    </div>
+    <div class="sxn">Analytics</div>
+    <div style="padding:0 6px">
+      <div class="nav" onclick="go('progress',this)"><i class="ti ti-chart-line"></i>Progress</div>
+      <div class="nav" onclick="go('reports',this)"><i class="ti ti-report"></i>Reports</div>
+    </div>
+    <div class="sidebar-foot">
+      <div class="qstat">
+        <div><span style="color:var(--green)">32</span> on track</div>
+        <div><span style="color:#EF9F27">6</span> need attention</div>
+        <div><span style="color:#E24B4A">2</span> overdue</div>
+        <div style="margin-top:5px;font-size:11px;color:var(--text3)">Internship: 7/12 weeks done</div>
+        <div style="margin-top:8px">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Overall progress</div>
+          <div class="pb"><div class="pf pf-b" style="width:58%"></div></div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <div class="page on" id="page-dashboard">
+      <div class="ptitle">Dashboard</div>
+      <div class="psub">Internship monitoring — 40 projects · 12 faculty · 2025 batch</div>
+
+      <div class="metrics">
+        <div class="mcard"><div class="mlabel">Total Projects</div><div class="mval c-b">40</div><div class="msub">Across 8 domains</div></div>
+        <div class="mcard"><div class="mlabel">On Track</div><div class="mval c-g">32</div><div class="msub">80% healthy ratio</div></div>
+        <div class="mcard"><div class="mlabel">Submitted Today</div><div class="mval c-a">18</div><div class="msub">22 still pending</div></div>
+        <div class="mcard"><div class="mlabel">Avg Completion</div><div class="mval">58%</div><div class="msub">Target: 55% ✓</div></div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="card-ttl"><i class="ti ti-alert-triangle"></i>Needs Attention</div>
+          <div id="attn-list"></div>
+        </div>
+        <div class="card">
+          <div class="card-ttl"><i class="ti ti-chart-bar"></i>Submissions this week</div>
+          <div class="barchart" style="height:90px;margin-bottom:6px" id="sub-chart"></div>
+          <div style="font-size:12px;color:var(--text2);text-align:center">285 total across all weeks</div>
+        </div>
+        <div class="card">
+          <div class="card-ttl"><i class="ti ti-users"></i>Faculty Load</div>
+          <div id="fac-load"></div>
+        </div>
+        <div class="card">
+          <div class="card-ttl"><i class="ti ti-clock"></i>Recent Activity</div>
+          <div id="recent-act"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div class="page" id="page-projects">
+      <div class="ptitle">All Projects</div>
+      <div class="psub">40 internship projects across 8 domains</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+        <div class="srch" style="flex:1;margin-bottom:0;min-width:180px"><i class="ti ti-search"></i><input type="text" placeholder="Search project or team…" oninput="filterP(this.value)"></div>
+        <select style="width:150px" onchange="filterPS(this.value)"><option value="">All Status</option><option>On Track</option><option>Needs Review</option><option>Delayed</option></select>
+        <select style="width:150px" onchange="filterPF(this.value)"><option value="">All Faculty</option></select>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <div class="pgrid hdr"><div>#</div><div>Project</div><div>Faculty</div><div>Progress</div><div>Status</div><div>W7 Report</div><div>Action</div></div>
+        <div id="proj-list"></div>
+      </div>
+      <div id="proj-count" style="text-align:right;font-size:12px;color:var(--text3);margin-top:8px"></div>
+    </div>
+
+    <!-- FACULTY -->
+    <div class="page" id="page-faculty">
+      <div class="ptitle">Faculty Members</div>
+      <div class="psub">12 faculty guiding 40 projects</div>
+      <div class="fgrid" id="fac-grid"></div>
+    </div>
+
+    <!-- WEEKLY REPORTS -->
+    <div class="page" id="page-weekly">
+      <div class="ptitle">Weekly Reports</div>
+      <div class="psub">Track week-by-week progress from all teams</div>
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px">
+        <div class="wtabs" id="week-tabs" style="margin-bottom:0;flex:1"></div>
+        <select style="width:160px" onchange="filterWS(this.value)"><option value="">All Projects</option><option value="Submitted">Submitted</option><option value="Pending">Pending</option></select>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <div style="display:grid;grid-template-columns:36px 1fr 130px 110px 80px 90px;gap:12px;padding:8px 14px;border-bottom:0.5px solid var(--border);font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.7px">
+          <div>#</div><div>Project</div><div>Faculty</div><div>Status</div><div>Score</div><div>Action</div>
+        </div>
+        <div id="weekly-list"></div>
+      </div>
+      <div id="weekly-stats" style="display:flex;gap:16px;margin-top:12px;font-size:13px;color:var(--text2)"></div>
+    </div>
+
+    <!-- ASSIGNMENTS -->
+    <div class="page" id="page-assignments">
+      <div class="ptitle">Assignments & Tasks</div>
+      <div class="psub">Create and track tasks for all intern teams</div>
+      <div class="sechdr">
+        <div class="wtabs" id="assign-tabs" style="margin-bottom:0"></div>
+        <button class="btn sm primary" onclick="openModal('amodal')"><i class="ti ti-plus"></i>New Assignment</button>
+      </div>
+      <div id="assign-list"></div>
+    </div>
+
+    <!-- SUBMISSIONS -->
+    <div class="page" id="page-submissions">
+      <div class="ptitle">Submissions Inbox</div>
+      <div class="psub">All file submissions and task completions</div>
+      <div style="display:flex;gap:10px;margin-bottom:14px">
+        <div class="srch" style="flex:1;margin-bottom:0"><i class="ti ti-search"></i><input type="text" placeholder="Search submissions…" oninput="filterSubs(this.value)"></div>
+        <select style="width:150px"><option>All Types</option><option>Weekly Report</option><option>Assignment</option><option>Presentation</option><option>Final Report</option></select>
+        <select style="width:120px"><option>This Week</option><option>All Time</option></select>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <div style="display:grid;grid-template-columns:1fr 90px 130px 120px 90px;gap:12px;padding:8px 14px;border-bottom:0.5px solid var(--border);font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.7px">
+          <div>File / Submission</div><div>Project</div><div>Type</div><div>Date</div><div>Status</div>
+        </div>
+        <div id="sub-list"></div>
+      </div>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="page" id="page-progress">
+      <div class="ptitle">Progress Analytics</div>
+      <div class="psub">Visual completion rates and domain breakdown</div>
+      <div class="card">
+        <div class="card-ttl"><i class="ti ti-chart-bar"></i>Week-by-week completion (all 40 projects)</div>
+        <div class="barchart" style="height:130px;margin-bottom:8px" id="prog-chart"></div>
+        <div style="font-size:12px;color:var(--text2);text-align:center;margin-top:4px">Average completion % per week · W8–W12 projected (dashed)</div>
+      </div>
+      <div class="grid2">
+        <div class="card"><div class="card-ttl"><i class="ti ti-layout-distribute-vertical"></i>Domain breakdown</div><div id="domain-bars"></div></div>
+        <div class="card"><div class="card-ttl"><i class="ti ti-trophy"></i>Top 5 projects</div><div id="top-projs"></div></div>
+      </div>
+    </div>
+
+    <!-- REPORTS -->
+    <div class="page" id="page-reports">
+      <div class="ptitle">Generate Reports</div>
+      <div class="psub">Export summaries and evaluations</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="card" style="cursor:pointer" onclick="toast('Generating Weekly Summary report…')">
+          <div style="font-size:32px;margin-bottom:10px;color:var(--blue)"><i class="ti ti-file-analytics"></i></div>
+          <div style="font-weight:600;margin-bottom:4px">Weekly Summary</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:14px">Full status of all 40 projects for any given week</div>
+          <button class="btn sm primary" onclick="event.stopPropagation();toast('Generating report…')"><i class="ti ti-download"></i>Generate</button>
+        </div>
+        <div class="card" style="cursor:pointer" onclick="toast('Generating Faculty Workload report…')">
+          <div style="font-size:32px;margin-bottom:10px;color:var(--green)"><i class="ti ti-users"></i></div>
+          <div style="font-weight:600;margin-bottom:4px">Faculty Workload</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:14px">Review rates and project load per faculty member</div>
+          <button class="btn sm primary" onclick="event.stopPropagation();toast('Generating report…')"><i class="ti ti-download"></i>Generate</button>
+        </div>
+        <div class="card" style="cursor:pointer" onclick="toast('Generating At-Risk Projects report…')">
+          <div style="font-size:32px;margin-bottom:10px;color:#BA7517"><i class="ti ti-alert-triangle"></i></div>
+          <div style="font-weight:600;margin-bottom:4px">At-Risk Projects</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:14px">Projects with delays, missing submissions or low scores</div>
+          <button class="btn sm" onclick="event.stopPropagation();toast('Generating report…')"><i class="ti ti-download"></i>Generate</button>
+        </div>
+        <div class="card" style="cursor:pointer" onclick="toast('Generating Final Completion report…')">
+          <div style="font-size:32px;margin-bottom:10px;color:#533AB7"><i class="ti ti-report-analytics"></i></div>
+          <div style="font-weight:600;margin-bottom:4px">Final Report</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:14px">End-of-program evaluation and outcomes for all teams</div>
+          <button class="btn sm" onclick="event.stopPropagation();toast('Generating report…')"><i class="ti ti-download"></i>Generate</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Overlay -->
+<div class="overlay" id="overlay" onclick="closeAll(event)">
+  <!-- Notification modal -->
+  <div class="modal" id="nmodal" style="display:none">
+    <div class="mtitle">Notifications <button class="btn sm" onclick="closeAllM()"><i class="ti ti-x"></i></button></div>
+    <div class="notif"><i class="ti ti-alert-triangle" style="color:#EF9F27"></i><div><div>P-27 MedSync has not submitted for 3 weeks</div><div class="ntime">2 hours ago</div></div></div>
+    <div class="notif"><i class="ti ti-file-upload" style="color:var(--blue)"></i><div><div>Assignment 4 due tomorrow — 22 teams pending</div><div class="ntime">5 hours ago</div></div></div>
+    <div class="notif"><i class="ti ti-check" style="color:var(--green)"></i><div><div>P-08 Week 7 report reviewed by Dr. Ramesh</div><div class="ntime">Today, 10:30 AM</div></div></div>
+    <div class="notif"><i class="ti ti-user-plus" style="color:var(--blue)"></i><div><div>P-40 DroneAI assigned to Prof. Nandini</div><div class="ntime">Today, 9:15 AM</div></div></div>
+  </div>
+
+  <!-- New Assignment modal -->
+  <div class="modal" id="amodal" style="display:none">
+    <div class="mtitle">New Assignment <button class="btn sm" onclick="closeAllM()"><i class="ti ti-x"></i></button></div>
+    <div class="fl">Assignment Title</div>
+    <input type="text" placeholder="e.g. Mid-term progress report" id="a-title">
+    <div class="frow" style="margin-top:0">
+      <div><div class="fl">Due Date</div><input type="date" id="a-due"></div>
+      <div><div class="fl">Type</div>
+        <select id="a-type"><option>Weekly Report</option><option>Presentation</option><option>Code Submission</option><option>Quiz</option><option>Final Report</option></select>
+      </div>
+    </div>
+    <div class="frow">
+      <div><div class="fl">Assign To</div>
+        <select id="a-assign"><option>All Projects</option><option>AI/ML Domain</option><option>Web Dev Domain</option><option>IoT Domain</option><option>Specific Team</option></select>
+      </div>
+      <div><div class="fl">Reviewed By</div>
+        <select id="a-fac"><option>All Faculty</option><option>Dr. Ramesh</option><option>Prof. Sunita</option><option>Dr. Meena K.</option><option>Prof. Anand</option><option>Dr. Vijaya</option></select>
+      </div>
+    </div>
+    <div class="fl">Description</div>
+    <textarea rows="3" id="a-desc" placeholder="What is expected from the teams…" style="resize:vertical"></textarea>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+      <button class="btn" onclick="closeAllM()">Cancel</button>
+      <button class="btn primary" onclick="addAssign()"><i class="ti ti-check"></i>Create</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast-el"></div>
+
+<script>
+const DOMAINS=['AI/ML','Web Dev','IoT','Cybersecurity','Data Science','Blockchain','Mobile','Cloud'];
+const NAMES=['SmartCrop AI','MedSync','VoiceBot','EduTrack','GreenGrid','NetShield','HealthAI','CodeReview','TrafficAI','StockSage','WeatherML','BlockVault','CloudOps','AppFlow','DataLens','SecureNet','RoboArm','SpeechBot','PoseNet','FaceGuard','TalentAI','LearnPath','ChatMed','FinEdge','SkyMonitor','BioTrack','SmartHome','DeepScan','AutoDoc','VR-Learn','EnergyAI','FoodChain','AgriBot','CityBrain','HealthBot','NLP-Pro','CryptoPay','EdgeCloud','SmartCity','DroneAI'];
+const FACULTY=[
+  {name:'Dr. Ramesh',dept:'CSE',c:'#185FA5',i:'DR',n:5},
+  {name:'Prof. Sunita',dept:'IT',c:'#0F6E56',i:'PS',n:4},
+  {name:'Dr. Meena K.',dept:'ECE',c:'#854F0B',i:'MK',n:3},
+  {name:'Prof. Anand',dept:'CSE',c:'#A32D2D',i:'PA',n:4},
+  {name:'Dr. Vijaya',dept:'Data Sci',c:'#533AB7',i:'DV',n:4},
+  {name:'Prof. Krishnan',dept:'Cybersec',c:'#3B6D11',i:'PK',n:3},
+  {name:'Dr. Priya',dept:'IoT',c:'#993C1D',i:'DP',n:3},
+  {name:'Prof. Suresh',dept:'Cloud',c:'#185FA5',i:'PSR',n:3},
+  {name:'Dr. Lalitha',dept:'Blockchain',c:'#993556',i:'DL',n:3},
+  {name:'Prof. Ravi',dept:'Mobile',c:'#5F5E5A',i:'PR',n:3},
+  {name:'Dr. Arun',dept:'AI/ML',c:'#0F6E56',i:'DA',n:4},
+  {name:'Prof. Nandini',dept:'Web Dev',c:'#854F0B',i:'PN',n:4}
+];
+const STAT_POOL=['On Track','On Track','On Track','On Track','Needs Review','Delayed'];
+const PROJS=NAMES.map((nm,i)=>{
+  const f=FACULTY[i%FACULTY.length];
+  const st=STAT_POOL[Math.floor(Math.random()*STAT_POOL.length)];
+  const prog=st==='On Track'?50+Math.floor(Math.random()*38):st==='Needs Review'?22+Math.floor(Math.random()*26):8+Math.floor(Math.random()*22);
+  return{id:i+1,name:nm,f:f.name,fi:f.i,fc:f.c,domain:DOMAINS[i%8],prog,st,w7:Math.random()>.28?'Submitted':'Pending'};
+});
+
+let wFilter='',pFilter='',fFilter='',currentWeek=7;
+
+const ASSIGNS=[
+  {id:1,title:'Week 7 Progress Report',type:'Weekly Report',due:'2025-07-18',st:'Active',sub:28,tot:40,desc:'Submit a detailed week 7 update including completed tasks, blockers, and next steps.'},
+  {id:2,title:'Mid-term Presentation',type:'Presentation',due:'2025-07-22',st:'Active',sub:10,tot:40,desc:'Prepare a 10-minute presentation covering project goals, progress, and a live demo.'},
+  {id:3,title:'Code Repository Link',type:'Code Submission',due:'2025-07-15',st:'Closed',sub:38,tot:40,desc:'Push all code to the assigned GitHub repo and submit the link via the portal.'},
+  {id:4,title:'Literature Review',type:'Weekly Report',due:'2025-07-05',st:'Closed',sub:40,tot:40,desc:'Submit a 3-page review of relevant papers and technologies used in your project.'},
+  {id:5,title:'Data Collection Log',type:'Weekly Report',due:'2025-07-25',st:'Draft',sub:0,tot:40,desc:'Log all data sources, collection methods, and preprocessing steps with examples.'},
+];
+
+const SUBS=[
+  {file:'P08_Week7_Report.pdf',proj:'P-08',type:'Weekly Report',date:'Today 10:15 AM',st:'Reviewed'},
+  {file:'P12_W7_Progress.docx',proj:'P-12',type:'Weekly Report',date:'Today 9:42 AM',st:'Pending'},
+  {file:'P03_MidTerm_Slides.pptx',proj:'P-03',type:'Presentation',date:'Yesterday',st:'Reviewed'},
+  {file:'P19_Code_Link.txt',proj:'P-19',type:'Code Submission',date:'Yesterday',st:'Pending'},
+  {file:'P01_Literature_Review.pdf',proj:'P-01',type:'Weekly Report',date:'Jul 15',st:'Reviewed'},
+  {file:'P35_DataLog.xlsx',proj:'P-35',type:'Weekly Report',date:'Jul 14',st:'Flagged'},
+  {file:'P22_MidTerm_Deck.pptx',proj:'P-22',type:'Presentation',date:'Jul 13',st:'Reviewed'},
+  {file:'P07_CodeRepo.txt',proj:'P-07',type:'Code Submission',date:'Jul 13',st:'Reviewed'},
+];
+
+function go(id,el){
+  document.querySelectorAll('.nav').forEach(n=>n.classList.remove('on'));
+  el.classList.add('on');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.getElementById('page-'+id).classList.add('on');
+}
+
+function openModal(id){
+  document.getElementById('overlay').classList.add('open');
+  document.querySelectorAll('.modal').forEach(m=>m.style.display='none');
+  document.getElementById(id).style.display='block';
+}
+function closeAll(e){if(e.target===document.getElementById('overlay'))closeAllM();}
+function closeAllM(){document.getElementById('overlay').classList.remove('open');}
+
+function toast(msg){
+  const t=document.getElementById('toast-el');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// ---- Dashboard ----
+function buildDash(){
+  document.getElementById('attn-list').innerHTML=
+    [{id:14,name:'SmartCrop AI',msg:'Report overdue by 2 days',dot:'da'},
+     {id:27,name:'MedSync',msg:'No submission for 3 weeks',dot:'dr'},
+     {id:33,name:'VoiceBot',msg:'Progress stalled at 35%',dot:'da'}]
+    .map(a=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--border)">
+      <div><span class="dot ${a.dot}"></span><strong>P-${a.id}</strong> — ${a.name}<br>
+      <span style="font-size:11px;color:var(--text2);margin-left:11px">${a.msg}</span></div>
+      <button class="btn sm" onclick="toast('Reminder sent to team P-${a.id}')">Ping</button>
+    </div>`).join('');
+
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat'];
+  const vals=[38,55,32,62,48,18];
+  const maxv=Math.max(...vals);
+  document.getElementById('sub-chart').innerHTML=days.map((d,i)=>`
+    <div class="barcol"><div class="bar" style="height:${Math.round(vals[i]/maxv*80)}px;background:#5DCAA5"></div><div class="blbl">${d}</div></div>`).join('');
+
+  document.getElementById('fac-load').innerHTML=FACULTY.slice(0,5).map(f=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:0.5px solid var(--border)">
+      <div class="avatar" style="width:26px;height:26px;font-size:9px;flex-shrink:0;background:${f.c}">${f.i}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:500;margin-bottom:3px">${f.name}</div>
+        <div class="pb"><div class="pf" style="width:${f.n*20}%;background:${f.c}"></div></div>
+      </div>
+      <span style="font-size:12px;color:var(--text2);flex-shrink:0">${f.n} proj</span>
+    </div>`).join('');
+
+  const acts=[
+    {icon:'ti-file-check',c:'var(--green)',msg:'P-08 Week 7 report submitted',t:'20 min ago'},
+    {icon:'ti-message',c:'var(--blue)',msg:'P-12 feedback by Dr. Ramesh',t:'1h ago'},
+    {icon:'ti-alert',c:'#EF9F27',msg:'Assignment 4 due tomorrow',t:'3h ago'},
+    {icon:'ti-user-plus',c:'var(--teal-text)',msg:'P-40 assigned to Prof. Nandini',t:'4h ago'},
+  ];
+  document.getElementById('recent-act').innerHTML=acts.map(a=>`
+    <div style="display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:0.5px solid var(--border)">
+      <i class="${a.icon} ti" style="font-size:16px;color:${a.c};margin-top:1px;flex-shrink:0"></i>
+      <div style="flex:1;font-size:13px">${a.msg}</div>
+      <span style="font-size:11px;color:var(--text3);flex-shrink:0">${a.t}</span>
+    </div>`).join('');
+}
+
+// ---- Projects ----
+function buildProjects(list){
+  const el=document.getElementById('proj-list');
+  el.innerHTML=list.map(p=>`
+    <div class="pgrid" style="cursor:pointer">
+      <div class="pnum">${p.id}</div>
+      <div><div style="font-weight:500">${p.name}</div><div style="font-size:11px;color:var(--text2)">${p.domain}</div></div>
+      <div style="font-size:12px;display:flex;align-items:center;gap:5px">
+        <div class="avatar" style="width:22px;height:22px;font-size:9px;background:${p.fc};flex-shrink:0">${p.fi}</div>
+        ${p.f.split(' ').slice(-1)[0]}
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>${p.prog}%</span></div>
+        <div class="pb"><div class="pf ${p.st==='Delayed'?'pf-a':p.st==='Needs Review'?'pf-b':''}" style="width:${p.prog}%"></div></div>
+      </div>
+      <div><span class="badge ${p.st==='On Track'?'bg':p.st==='Needs Review'?'ba':'br'}">
+        <span class="dot ${p.st==='On Track'?'dg':p.st==='Needs Review'?'da':'dr'}" style="width:6px;height:6px;margin-right:2px"></span>${p.st}</span>
+      </div>
+      <div><span class="badge ${p.w7==='Submitted'?'bt':'bgr'}">${p.w7}</span></div>
+      <div><button class="btn sm" onclick="event.stopPropagation();toast('Opening P-${p.id} ${p.name}')">View</button></div>
+    </div>`).join('');
+  document.getElementById('proj-count').textContent=`Showing ${list.length} of 40 projects`;
+}
+
+function filterP(q){wFilter=q;applyFilter();}
+function filterPS(s){pFilter=s;applyFilter();}
+function filterPF(f){fFilter=f;applyFilter();}
+function applyFilter(){
+  let res=PROJS;
+  if(wFilter)res=res.filter(p=>p.name.toLowerCase().includes(wFilter.toLowerCase())||p.f.toLowerCase().includes(wFilter.toLowerCase()));
+  if(pFilter)res=res.filter(p=>p.st===pFilter);
+  if(fFilter)res=res.filter(p=>p.f===fFilter);
+  buildProjects(res);
+}
+
+// ---- Faculty ----
+function buildFaculty(){
+  document.getElementById('fac-grid').innerHTML=FACULTY.map(f=>`
+    <div class="fcard">
+      <div class="fav" style="background:${f.c}">${f.i}</div>
+      <div class="fname">${f.name}</div>
+      <div class="fdept">${f.dept} Dept.</div>
+      <div class="fstats">
+        <div class="fstat"><div class="fstal">Projects</div><div class="fstav c-b">${f.n}</div></div>
+        <div class="fstat"><div class="fstal">Reviews</div><div class="fstav">${f.n*6+Math.floor(Math.random()*5)}</div></div>
+        <div class="fstat"><div class="fstal">Pending</div><div class="fstav c-a">${Math.floor(Math.random()*3)}</div></div>
+        <div class="fstat"><div class="fstal">Avg Score</div><div class="fstav c-g">${(7.2+Math.random()*2).toFixed(1)}</div></div>
+      </div>
+    </div>`).join('');
+}
+
+// ---- Weekly ----
+let weekFilter='';
+function buildWeekTabs(){
+  const el=document.getElementById('week-tabs');
+  el.innerHTML=Array.from({length:12},(_,i)=>{const w=i+1;return`<button class="wtab${w===currentWeek?' on':''}" onclick="selWeek(${w})">${w<=currentWeek?'W'+w:'W'+w}</button>`;}).join('');
+}
+function selWeek(w){
+  currentWeek=w;
+  buildWeekTabs();
+  buildWeekly();
+}
+function filterWS(v){weekFilter=v;buildWeekly();}
+function buildWeekly(){
+  const el=document.getElementById('weekly-list');
+  let list=PROJS.map(p=>{
+    const sub=Math.random()>.3?'Submitted':'Pending';
+    const score=sub==='Submitted'?(6+Math.random()*4).toFixed(1):'—';
+    return{...p,wsub:sub,wscore:score};
+  });
+  if(weekFilter)list=list.filter(p=>p.wsub===weekFilter);
+  el.innerHTML=list.slice(0,20).map(p=>`
+    <div style="display:grid;grid-template-columns:36px 1fr 130px 110px 80px 90px;gap:12px;padding:10px 14px;border-bottom:0.5px solid var(--border);font-size:13px;align-items:center">
+      <div class="pnum">${p.id}</div>
+      <div><div style="font-weight:500">${p.name}</div><div style="font-size:11px;color:var(--text2)">${p.domain}</div></div>
+      <div style="font-size:12px">${p.f.split(' ').slice(-1)[0]}</div>
+      <div><span class="badge ${p.wsub==='Submitted'?'bt':'bgr'}">${p.wsub==='Submitted'?'W'+currentWeek+' ✓':'Pending'}</span></div>
+      <div style="font-weight:500;color:${p.wsub==='Submitted'?'var(--green)':'var(--text3)'}">${p.wscore}</div>
+      <div>${p.wsub==='Submitted'?`<button class="btn sm" onclick="toast('Opening report…')">Review</button>`:`<button class="btn sm warn" onclick="toast('Reminder sent!')">Remind</button>`}</div>
+    </div>`).join('');
+  const sub=list.filter(p=>p.wsub==='Submitted').length;
+  document.getElementById('weekly-stats').innerHTML=`
+    <span><span class="dot dg"></span><strong>${sub}</strong> submitted</span>
+    <span><span class="dot da"></span><strong>${list.length-sub}</strong> pending</span>
+    <span style="color:var(--text3)">Showing ${Math.min(20,list.length)} of ${list.length} projects</span>`;
+}
+
+// ---- Assignments ----
+let assignFilter='All';
+function buildAssignTabs(){
+  const el=document.getElementById('assign-tabs');
+  ['All','Active','Closed','Draft'].forEach(f=>{
+    const b=document.createElement('button');
+    b.className='wtab'+(f==='All'?' on':'');
+    b.textContent=f;
+    b.onclick=()=>{
+      document.querySelectorAll('#assign-tabs .wtab').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');assignFilter=f;buildAssigns();
+    };
+    el.appendChild(b);
+  });
+}
+function buildAssigns(){
+  const list=assignFilter==='All'?ASSIGNS:ASSIGNS.filter(a=>a.st===assignFilter);
+  document.getElementById('assign-list').innerHTML=list.map(a=>{
+    const pct=Math.round(a.sub/a.tot*100);
+    return`<div class="acard">
+      <div>
+        <div style="font-weight:600;font-size:14px;margin-bottom:3px">${a.title}</div>
+        <div class="ameta">${a.desc}</div>
+        <div style="margin-top:8px;display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+          <span class="badge ${a.st==='Active'?'bg':a.st==='Closed'?'bgr':'bb'}">${a.st}</span>
+          <span class="badge bb">${a.type}</span>
+          <span style="font-size:12px;color:var(--text2)"><i class="ti ti-calendar" style="font-size:13px;vertical-align:-2px"></i> Due ${a.due}</span>
+        </div>
+        <div style="margin-top:10px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+            <span>${a.sub}/${a.tot} submitted</span>
+            <span style="color:${pct===100?'var(--green)':'var(--text2)'};font-weight:500">${pct}%</span>
+          </div>
+          <div class="pb"><div class="pf ${pct<50?'pf-a':''}" style="width:${pct}%"></div></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+        <button class="btn sm" onclick="toast('Opening ${a.title} details…')">View</button>
+        ${a.st==='Active'?`<button class="btn sm warn" onclick="toast('Reminder sent to all pending teams!')">Remind all</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function addAssign(){
+  const t=document.getElementById('a-title').value.trim();
+  if(!t){toast('Please enter a title');return;}
+  ASSIGNS.unshift({id:ASSIGNS.length+1,title:t,type:document.getElementById('a-type').value,
+    due:document.getElementById('a-due').value||'TBD',st:'Active',sub:0,tot:40,
+    desc:document.getElementById('a-desc').value||'No description.'});
+  closeAllM();
+  go('assignments',document.querySelector('[onclick*=assignments]'));
+  buildAssigns();
+  toast('Assignment created successfully!');
+}
+
+// ---- Submissions ----
+let subsAll=SUBS;
+function buildSubs(list){
+  document.getElementById('sub-list').innerHTML=(list||subsAll).map(s=>`
+    <div style="display:grid;grid-template-columns:1fr 90px 130px 120px 90px;gap:12px;padding:10px 14px;border-bottom:0.5px solid var(--border);font-size:13px;align-items:center">
+      <div style="display:flex;align-items:center;gap:8px">
+        <i class="ti ti-file" style="color:var(--text3);font-size:16px;flex-shrink:0"></i>
+        <span>${s.file}</span>
+      </div>
+      <div><span class="badge bb">${s.proj}</span></div>
+      <div style="font-size:12px;color:var(--text2)">${s.type}</div>
+      <div style="font-size:12px;color:var(--text2)">${s.date}</div>
+      <div><span class="badge ${s.st==='Reviewed'?'bg':s.st==='Flagged'?'br':'ba'}">${s.st}</span></div>
+    </div>`).join('');
+}
+function filterSubs(q){buildSubs(subsAll.filter(s=>s.file.toLowerCase().includes(q.toLowerCase())||s.proj.toLowerCase().includes(q.toLowerCase())));}
+
+// ---- Progress ----
+function buildProgress(){
+  const weeks=[{w:'W1',v:12,proj:true},{w:'W2',v:22,proj:true},{w:'W3',v:33,proj:true},{w:'W4',v:43,proj:true},{w:'W5',v:52,proj:true},{w:'W6',v:56,proj:true},{w:'W7',v:58,proj:true},{w:'W8',v:62,proj:false},{w:'W9',v:68,proj:false},{w:'W10',v:75,proj:false},{w:'W11',v:84,proj:false},{w:'W12',v:92,proj:false}];
+  const maxv=Math.max(...weeks.map(w=>w.v));
+  document.getElementById('prog-chart').innerHTML=weeks.map(w=>`
+    <div class="barcol">
+      <div class="bar" style="height:${Math.round(w.v/maxv*110)}px;background:${w.proj?'#378ADD':'#D3D1C7'};${w.proj?'':'border:1px dashed #B4B2A9;background:transparent;height:'+Math.round(w.v/maxv*110)+'px'}"></div>
+      <div class="blbl">${w.w}</div>
+    </div>`).join('');
+
+  const domains=DOMAINS.map(d=>{
+    const ps=PROJS.filter(p=>p.domain===d);
+    return{d,avg:Math.round(ps.reduce((a,p)=>a+p.prog,0)/ps.length),n:ps.length};
+  });
+  document.getElementById('domain-bars').innerHTML=domains.map(d=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:0.5px solid var(--border);font-size:13px">
+      <div style="width:90px;font-size:12px;color:var(--text2)">${d.d}</div>
+      <div class="pb" style="flex:1"><div class="pf" style="width:${d.avg}%"></div></div>
+      <div style="width:38px;text-align:right;font-size:12px;font-weight:600">${d.avg}%</div>
+    </div>`).join('');
+
+  const top=[...PROJS].sort((a,b)=>b.prog-a.prog).slice(0,5);
+  document.getElementById('top-projs').innerHTML=top.map((p,i)=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:0.5px solid var(--border);font-size:13px">
+      <div style="font-size:12px;font-weight:600;width:18px;color:var(--text3)">${i+1}</div>
+      <div style="flex:1"><div style="font-weight:500">${p.name}</div><div style="font-size:11px;color:var(--text2)">${p.f}</div></div>
+      <div style="font-weight:600;color:var(--green)">${p.prog}%</div>
+    </div>`).join('');
+}
+
+// ---- Faculty dropdown ----
+const fsel=document.querySelector('[onchange="filterPF(this.value)"]');
+FACULTY.forEach(f=>{const o=document.createElement('option');o.value=f.name;o.textContent=f.name;fsel.appendChild(o);});
+
+// Init
+buildDash();
+buildProjects(PROJS);
+buildFaculty();
+buildWeekTabs();
+buildWeekly();
+buildAssignTabs();
+buildAssigns();
+buildSubs();
+buildProgress();
+</script>
+</body>
+</html>
