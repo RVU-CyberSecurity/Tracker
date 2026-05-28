@@ -216,7 +216,7 @@ select{cursor:pointer}
     <!-- DASHBOARD -->
     <div class="page on" id="page-dashboard">
       <div class="ptitle">Dashboard</div>
-      <div class="psub">Internship monitoring — 40 projects · 12 faculty · 2025 batch</div>
+      <div class="psub">Internship monitoring </div>
 
       <div class="metrics">
         <div class="mcard"><div class="mlabel">Total Projects</div><div class="mval c-b">40</div><div class="msub">Across 8 domains</div></div>
@@ -249,7 +249,7 @@ select{cursor:pointer}
     <!-- PROJECTS -->
     <div class="page" id="page-projects">
       <div class="ptitle">All Projects</div>
-      <div class="psub">40 internship projects across 8 domains</div>
+      <div class="psub">Internship projects </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
         <div class="srch" style="flex:1;margin-bottom:0;min-width:180px"><i class="ti ti-search"></i><input type="text" placeholder="Search project or team…" oninput="filterP(this.value)"></div>
         <select style="width:150px" onchange="filterPS(this.value)"><option value="">All Status</option><option>On Track</option><option>Needs Review</option><option>Delayed</option></select>
@@ -265,7 +265,7 @@ select{cursor:pointer}
     <!-- FACULTY -->
     <div class="page" id="page-faculty">
       <div class="ptitle">Faculty Members</div>
-      <div class="psub">12 faculty guiding 40 projects</div>
+      <div class="psub">Cyber Security faculty guiding projects</div>
       <div class="fgrid" id="fac-grid"></div>
     </div>
 
@@ -406,22 +406,47 @@ select{cursor:pointer}
 <div class="toast" id="toast-el"></div>
 
 <script>
-const DOMAINS=['AI/ML','Web Dev','IoT','Cybersecurity','Data Science','Blockchain','Mobile','Cloud'];
-const NAMES=['SmartCrop AI','MedSync','VoiceBot','EduTrack','GreenGrid','NetShield','HealthAI','CodeReview','TrafficAI','StockSage','WeatherML','BlockVault','CloudOps','AppFlow','DataLens','SecureNet','RoboArm','SpeechBot','PoseNet','FaceGuard','TalentAI','LearnPath','ChatMed','FinEdge','SkyMonitor','BioTrack','SmartHome','DeepScan','AutoDoc','VR-Learn','EnergyAI','FoodChain','AgriBot','CityBrain','HealthBot','NLP-Pro','CryptoPay','EdgeCloud','SmartCity','DroneAI'];
+const DOMAINS=['Cybersecurity'];
+const NAMES=['802.1X Port-Based Authentication with RADIUS',
+'A Q-Learning Based Intrusion-Resilient Routing Protocol',
+'AI-Based Cyber Crime Prediction System',
+'AI-Based Network Traffic Anomaly Detection',
+'AI-Driven Adaptive Intrusion Detection Framework',
+'AI-Driven Cloud Security Threat Detection System',
+'Adversarial Attack Detection Framework',
+'An Intelligent Multi-Layered Phishing Detection',
+'NIST PQC Standards Benchmarking',
+'Blockchain-Based Unified Digital Identity System',
+'Prompt Injection Payloads Detection System',
+'Framework for detecting Tool Poisoning/MCP attacks',
+'Secure prompt validation & response filtering model',
+'Defense mechanism for malicious instructions detection',
+'Encrypted Traffic Fingerprinting for Malware',
+'Ethical Hacking Simulation Framework',
+'Honeypot Deployment & Attacker Profiling',
+'AI-Driven Cloud Security Threat Detection System',
+'Insider Threat Detection Using Behavioral Analytics',
+'Intelligent Cloud Security Misconfiguration Detection',
+'Intelligent QR Code Phishing Detection using AI',
+'LLM-Assisted Digital Forensics Investigation',
+'LLM-Assisted Malware Reverse Engineering',
+'Network Traffic Anomaly Detection & SIEM Integration',
+'Neural Network-Assisted Key Rate Estimation',
+'Secure Routing Protocol for IoT Networks'];
+
 const FACULTY=[
-  {name:'Dr. Ramesh',dept:'CSE',c:'#185FA5',i:'DR',n:5},
-  {name:'Prof. Sunita',dept:'IT',c:'#0F6E56',i:'PS',n:4},
-  {name:'Dr. Meena K.',dept:'ECE',c:'#854F0B',i:'MK',n:3},
-  {name:'Prof. Anand',dept:'CSE',c:'#A32D2D',i:'PA',n:4},
-  {name:'Dr. Vijaya',dept:'Data Sci',c:'#533AB7',i:'DV',n:4},
-  {name:'Prof. Krishnan',dept:'Cybersec',c:'#3B6D11',i:'PK',n:3},
-  {name:'Dr. Priya',dept:'IoT',c:'#993C1D',i:'DP',n:3},
-  {name:'Prof. Suresh',dept:'Cloud',c:'#185FA5',i:'PSR',n:3},
-  {name:'Dr. Lalitha',dept:'Blockchain',c:'#993556',i:'DL',n:3},
-  {name:'Prof. Ravi',dept:'Mobile',c:'#5F5E5A',i:'PR',n:3},
-  {name:'Dr. Arun',dept:'AI/ML',c:'#0F6E56',i:'DA',n:4},
-  {name:'Prof. Nandini',dept:'Web Dev',c:'#854F0B',i:'PN',n:4}
+{name:'Sunilkumar J',dept:'Cybersecurity',c:'#185FA5',i:'SJ',n:5},
+{name:'Evlin Vidyu Latha P',dept:'Cybersecurity',c:'#0F6E56',i:'EP',n:4},
+{name:'Dr. Manish Kumar',dept:'Cybersecurity',c:'#854F0B',i:'MK',n:3},
+{name:'Dr.Sarasvathi V',dept:'Cybersecurity',c:'#A32D2D',i:'SV',n:4},
+{name:'A V Amruthesh Bhat',dept:'Cybersecurity',c:'#533AB7',i:'AB',n:3},
+{name:'J. Cynthia',dept:'Cybersecurity',c:'#3B6D11',i:'JC',n:3},
+{name:'Dr. Ishita Chakraborty',dept:'Cybersecurity',c:'#993C1D',i:'IC',n:4},
+{name:'Dr Basavaraj Patil',dept:'Cybersecurity',c:'#185FA5',i:'BP',n:3},
+{name:'Sheba Pari N',dept:'Cybersecurity',c:'#993556',i:'SP',n:4},
+{name:'Dr. Saliha Bathool',dept:'Cybersecurity',c:'#5F5E5A',i:'SB',n:4}
 ];
+
 const STAT_POOL=['On Track','On Track','On Track','On Track','Needs Review','Delayed'];
 const PROJS=NAMES.map((nm,i)=>{
   const f=FACULTY[i%FACULTY.length];
@@ -430,27 +455,27 @@ const PROJS=NAMES.map((nm,i)=>{
   return{id:i+1,name:nm,f:f.name,fi:f.i,fc:f.c,domain:DOMAINS[i%8],prog,st,w7:Math.random()>.28?'Submitted':'Pending'};
 });
 
-let wFilter='',pFilter='',fFilter='',currentWeek=7;
+let wFilter='',pFilter='',fFilter='',currentWeek=1;
 
-const ASSIGNS=[
-  {id:1,title:'Week 7 Progress Report',type:'Weekly Report',due:'2025-07-18',st:'Active',sub:28,tot:40,desc:'Submit a detailed week 7 update including completed tasks, blockers, and next steps.'},
-  {id:2,title:'Mid-term Presentation',type:'Presentation',due:'2025-07-22',st:'Active',sub:10,tot:40,desc:'Prepare a 10-minute presentation covering project goals, progress, and a live demo.'},
-  {id:3,title:'Code Repository Link',type:'Code Submission',due:'2025-07-15',st:'Closed',sub:38,tot:40,desc:'Push all code to the assigned GitHub repo and submit the link via the portal.'},
-  {id:4,title:'Literature Review',type:'Weekly Report',due:'2025-07-05',st:'Closed',sub:40,tot:40,desc:'Submit a 3-page review of relevant papers and technologies used in your project.'},
-  {id:5,title:'Data Collection Log',type:'Weekly Report',due:'2025-07-25',st:'Draft',sub:0,tot:40,desc:'Log all data sources, collection methods, and preprocessing steps with examples.'},
+const ASSIGNS=[{id:1,title:'Project Proposal',type:'Document',due:'2025-06-07',st:'Closed',sub:38,tot:40,desc:'Submit a 2-page project proposal outlining objectives, scope, and methodology.'},
+{id:2,title:'Literature Review',type:'Report',due:'2025-06-14',st:'Closed',sub:35,tot:40,desc:'Review 5+ relevant papers and submit a summary report.'},
+{id:3,title:'System Design',type:'Design',due:'2025-06-21',st:'Closed',sub:33,tot:40,desc:'Create architecture diagrams and database schema.'},
+{id:4,title:'Prototype Development',type:'Code',due:'2025-06-28',st:'Active',sub:21,tot:40,desc:'Develop a working prototype with core features.'},
+{id:5,title:'Mid-term Presentation',type:'Presentation',due:'2025-07-05',st:'Draft',sub:0,tot:40,desc:'Prepare and deliver a 10-minute progress presentation.'},
+{id:6,title:'Testing & Documentation',type:'Code',due:'2025-07-12',st:'Draft',sub:0,tot:40,desc:'Complete unit testing and write API documentation.'},
+{id:7,title:'Final Demo',type:'Presentation',due:'2025-07-19',st:'Draft',sub:0,tot:40,desc:'Demonstrate the complete working system.'}];
+
+const SUBS=
+[{file:'P08_Week1_Proposal.pdf',proj:'P-08',type:'Weekly Submission',date:'2025-06-07',st:'Reviewed'},
+{file:'P12_Week2_LiteratureReview.docx',proj:'P-12',type:'Weekly Submission',date:'2025-06-14',st:'Reviewed'},
+{file:'P03_Week3_SystemDesign.pdf',proj:'P-03',type:'Weekly Submission',date:'2025-06-21',st:'Reviewed'},
+{file:'P19_Week4_Prototype.zip',proj:'P-19',type:'Weekly Submission',date:'2025-06-28',st:'Pending'},
+{file:'P01_Week5_MidtermSlides.pptx',proj:'P-01',type:'Weekly Submission',date:'2025-07-05',st:'Pending'},
+{file:'P35_Week6_TestingReport.pdf',proj:'P-35',type:'Weekly Submission',date:'2025-07-12',st:'Flagged'},
+{file:'P22_Week7_FinalDemo.pptx',proj:'P-22',type:'Weekly Submission',date:'2025-07-19',st:'Reviewed'},
+{file:'P07_Week2_ResearchSummary.docx',proj:'P-07',type:'Weekly Submission',date:'2025-06-14',st:'Reviewed'}
 ];
-
-const SUBS=[
-  {file:'P08_Week7_Report.pdf',proj:'P-08',type:'Weekly Report',date:'Today 10:15 AM',st:'Reviewed'},
-  {file:'P12_W7_Progress.docx',proj:'P-12',type:'Weekly Report',date:'Today 9:42 AM',st:'Pending'},
-  {file:'P03_MidTerm_Slides.pptx',proj:'P-03',type:'Presentation',date:'Yesterday',st:'Reviewed'},
-  {file:'P19_Code_Link.txt',proj:'P-19',type:'Code Submission',date:'Yesterday',st:'Pending'},
-  {file:'P01_Literature_Review.pdf',proj:'P-01',type:'Weekly Report',date:'Jul 15',st:'Reviewed'},
-  {file:'P35_DataLog.xlsx',proj:'P-35',type:'Weekly Report',date:'Jul 14',st:'Flagged'},
-  {file:'P22_MidTerm_Deck.pptx',proj:'P-22',type:'Presentation',date:'Jul 13',st:'Reviewed'},
-  {file:'P07_CodeRepo.txt',proj:'P-07',type:'Code Submission',date:'Jul 13',st:'Reviewed'},
-];
-
+  
 function go(id,el){
   document.querySelectorAll('.nav').forEach(n=>n.classList.remove('on'));
   el.classList.add('on');
@@ -475,22 +500,26 @@ function toast(msg){
 // ---- Dashboard ----
 function buildDash(){
   document.getElementById('attn-list').innerHTML=
-    [{id:14,name:'SmartCrop AI',msg:'Report overdue by 2 days',dot:'da'},
-     {id:27,name:'MedSync',msg:'No submission for 3 weeks',dot:'dr'},
-     {id:33,name:'VoiceBot',msg:'Progress stalled at 35%',dot:'da'}]
+    [{id:4,name:'Prototype Development',msg:'Pending weekly prototype submission',dot:'da'},
+     {id:5,name:'Mid-term Presentation',msg:'Presentation slides not uploaded',dot:'dr'},
+     {id:6,name:'Testing & Documentation',msg:'Documentation progress below 40%',dot:'da'}]
     .map(a=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--border)">
-      <div><span class="dot ${a.dot}"></span><strong>P-${a.id}</strong> — ${a.name}<br>
+      <div><span class="dot ${a.dot}"></span><strong>A-${a.id}</strong> — ${a.name}<br>
       <span style="font-size:11px;color:var(--text2);margin-left:11px">${a.msg}</span></div>
-      <button class="btn sm" onclick="toast('Reminder sent to team P-${a.id}')">Ping</button>
+      <button class="btn sm" onclick="toast('Reminder sent for Assignment ${a.id}')">Ping</button>
     </div>`).join('');
 
   const days=['Mon','Tue','Wed','Thu','Fri','Sat'];
-  const vals=[38,55,32,62,48,18];
+  const vals=[12,20,18,30,25,15];
   const maxv=Math.max(...vals);
-  document.getElementById('sub-chart').innerHTML=days.map((d,i)=>`
-    <div class="barcol"><div class="bar" style="height:${Math.round(vals[i]/maxv*80)}px;background:#5DCAA5"></div><div class="blbl">${d}</div></div>`).join('');
 
-  document.getElementById('fac-load').innerHTML=FACULTY.slice(0,5).map(f=>`
+  document.getElementById('sub-chart').innerHTML=days.map((d,i)=>`
+    <div class="barcol">
+      <div class="bar" style="height:${Math.round(vals[i]/maxv*80)}px;background:#5DCAA5"></div>
+      <div class="blbl">${d}</div>
+    </div>`).join('');
+
+  document.getElementById('fac-load').innerHTML=FACULTY.slice(0,10).map(f=>`
     <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:0.5px solid var(--border)">
       <div class="avatar" style="width:26px;height:26px;font-size:9px;flex-shrink:0;background:${f.c}">${f.i}</div>
       <div style="flex:1;min-width:0">
@@ -501,18 +530,13 @@ function buildDash(){
     </div>`).join('');
 
   const acts=[
-    {icon:'ti-file-check',c:'var(--green)',msg:'P-08 Week 7 report submitted',t:'20 min ago'},
-    {icon:'ti-message',c:'var(--blue)',msg:'P-12 feedback by Dr. Ramesh',t:'1h ago'},
-    {icon:'ti-alert',c:'#EF9F27',msg:'Assignment 4 due tomorrow',t:'3h ago'},
-    {icon:'ti-user-plus',c:'var(--teal-text)',msg:'P-40 assigned to Prof. Nandini',t:'4h ago'},
+    {icon:'ti-file-check',c:'var(--green)',msg:'P-08 Project Proposal submitted',t:'20 min ago'},
+    {icon:'ti-book',c:'var(--blue)',msg:'Literature Review uploaded by P-12',t:'1h ago'},
+    {icon:'ti-alert',c:'#EF9F27',msg:'System Design due tomorrow',t:'3h ago'},
+    {icon:'ti-code',c:'var(--teal-text)',msg:'Prototype repository updated by P-19',t:'4h ago'},
+    {icon:'ti-presentation',c:'#8B5CF6',msg:'Mid-term Presentation draft uploaded',t:'5h ago'}
   ];
-  document.getElementById('recent-act').innerHTML=acts.map(a=>`
-    <div style="display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:0.5px solid var(--border)">
-      <i class="${a.icon} ti" style="font-size:16px;color:${a.c};margin-top:1px;flex-shrink:0"></i>
-      <div style="flex:1;font-size:13px">${a.msg}</div>
-      <span style="font-size:11px;color:var(--text3);flex-shrink:0">${a.t}</span>
-    </div>`).join('');
-}
+
 
 // ---- Projects ----
 function buildProjects(list){
@@ -718,6 +742,189 @@ buildAssignTabs();
 buildAssigns();
 buildSubs();
 buildProgress();
+// ================= INITIALIZE APP =================
+function initApp(){
+  buildDash();
+  buildProjects(PROJS);
+  buildFaculty();
+  buildWeekTabs();
+  buildWeekly();
+  buildAssignTabs();
+  buildAssigns();
+  buildSubs();
+  buildProgress();
+}
+
+// ================= PROJECTS =================
+function buildProjects(data){
+  const el=document.getElementById('projects-grid');
+  if(!el) return;
+
+  el.innerHTML=data.map(p=>`
+    <div class="card">
+      <div class="card-h">
+        <div>
+          <div class="card-t">${p.name}</div>
+          <div class="muted">${p.domain}</div>
+        </div>
+        <span class="badge">${p.status}</span>
+      </div>
+
+      <div class="card-b">
+        <div><strong>Mentor:</strong> ${p.mentor}</div>
+        <div><strong>Students:</strong> ${p.students}</div>
+        <div><strong>Duration:</strong> ${p.startDate} → ${p.endDate}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ================= FACULTY =================
+function buildFaculty(){
+  const el=document.getElementById('faculty-grid');
+  if(!el) return;
+
+  el.innerHTML=FACULTY.map(f=>`
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="avatar" style="background:${f.c}">
+          ${f.i}
+        </div>
+
+        <div>
+          <div class="card-t">${f.name}</div>
+          <div class="muted">${f.dept}</div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px">
+        <div class="pb">
+          <div class="pf" style="width:${f.n*20}%;background:${f.c}"></div>
+        </div>
+
+        <div class="muted" style="margin-top:6px">
+          ${f.n} Active Projects
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ================= WEEK TABS =================
+function buildWeekTabs(){
+  const el=document.getElementById('week-tabs');
+  if(!el) return;
+
+  const weeks=['Week 1','Week 2','Week 3','Week 4','Week 5','Week 6'];
+
+  el.innerHTML=weeks.map((w,i)=>`
+    <button class="tab ${i===0?'active':''}">
+      ${w}
+    </button>
+  `).join('');
+}
+
+// ================= WEEKLY REPORTS =================
+function buildWeekly(){
+  const el=document.getElementById('weekly-list');
+  if(!el) return;
+
+  el.innerHTML=SUBS.map(s=>`
+    <div class="list-item">
+      <div>
+        <div class="title">${s.file}</div>
+        <div class="muted">${s.proj} • ${s.date}</div>
+      </div>
+
+      <span class="badge">${s.st}</span>
+    </div>
+  `).join('');
+}
+
+// ================= ASSIGNMENT TABS =================
+function buildAssignTabs(){
+  const el=document.getElementById('assign-tabs');
+  if(!el) return;
+
+  const tabs=['All','Active','Closed','Draft'];
+
+  el.innerHTML=tabs.map((t,i)=>`
+    <button class="tab ${i===0?'active':''}">
+      ${t}
+    </button>
+  `).join('');
+}
+
+// ================= ASSIGNMENTS =================
+function buildAssigns(){
+  const el=document.getElementById('assignments-list');
+  if(!el) return;
+
+  el.innerHTML=ASSIGNS.map(a=>`
+    <div class="card">
+      <div class="card-h">
+        <div>
+          <div class="card-t">${a.title}</div>
+          <div class="muted">${a.type}</div>
+        </div>
+
+        <span class="badge">${a.st}</span>
+      </div>
+
+      <div class="card-b">
+        <div>${a.desc}</div>
+
+        <div style="margin-top:10px">
+          <strong>Due:</strong> ${a.due}
+        </div>
+
+        <div style="margin-top:6px">
+          <strong>Submissions:</strong> ${a.sub}/${a.tot}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ================= SUBMISSIONS =================
+function buildSubs(){
+  const el=document.getElementById('subs-table');
+  if(!el) return;
+
+  el.innerHTML=SUBS.map(s=>`
+    <tr>
+      <td>${s.file}</td>
+      <td>${s.proj}</td>
+      <td>${s.type}</td>
+      <td>${s.date}</td>
+      <td><span class="badge">${s.st}</span></td>
+    </tr>
+  `).join('');
+}
+
+// ================= PROGRESS =================
+function buildProgress(){
+  const el=document.getElementById('progress-grid');
+  if(!el) return;
+
+  el.innerHTML=PROJS.slice(0,8).map(p=>`
+    <div class="card">
+      <div class="card-t">${p.name}</div>
+
+      <div class="pb" style="margin-top:10px">
+        <div class="pf" style="width:${p.progress || 60}%;background:#5DCAA5"></div>
+      </div>
+
+      <div class="muted" style="margin-top:6px">
+        ${p.progress || 60}% completed
+      </div>
+    </div>
+  `).join('');
+}
+
+// ================= START APP =================
+initApp();
+  
 </script>
 </body>
 </html>
